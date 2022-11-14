@@ -1,4 +1,5 @@
 from file_manager import FileManager
+from generator import Generator
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -6,10 +7,14 @@ from file_manager import FileManager
 
 
 def print_hi():
-    f: FileManager = FileManager()
+    """f: FileManager = FileManager()
     lis: list = f.load_text_file("files/email.txt")
-    for i in lis:
-        print(i)
+    for i, el in enumerate(lis):
+        a = lis[i]
+        print(a)"""
+
+    g: Generator = Generator()
+    g.generate_os_udaje(1_000)
 
 
 # Press the green button in the gutter to run the script.
@@ -30,3 +35,5 @@ a = pd.date_range(start="01-01-2015", end="01-01-2021", periods=1)
 
 print(str(o[0].date()))
 print(a)
+
+print(21%4)
