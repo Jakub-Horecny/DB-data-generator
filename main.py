@@ -1,5 +1,7 @@
 from file_manager import FileManager
 from generator import Generator
+
+
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -12,15 +14,17 @@ def print_hi():
     for i, el in enumerate(lis):
         a = lis[i]
         print(a)"""
-    #f: FileManager = FileManager()
-    #f.load_json()
+    # f: FileManager = FileManager()
+    # f.load_json()
     g: Generator = Generator()
-    #g.generate_mesto()
+    g.generate_os_udaje(5_00)
+    g.generate_zamestnanec(5, 10)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi()
+    #print()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
@@ -31,14 +35,24 @@ from datetime import date
 datelist = pd.date_range(date.today(), periods=100).tolist()
 print(datelist[0])
 
+
 o = pd.date_range(start="2018-09-09", end="2020-02-02")
 a = pd.date_range(start="01-01-2015", end="01-01-2021", periods=1)
 
 print(str(o[0].date()))
 print(a)
 
-print(21%4)
-"""
+print(21 % 4)
 
 mesto_id: list = list(range(1, 10))
-print(str(mesto_id))
+print(str(mesto_id))"""
+
+import datetime
+from datetime import timedelta
+import random
+
+start_date = datetime.datetime.now() - timedelta(days=10000)
+end_date = start_date + timedelta(days=100)
+
+random_date = start_date + (end_date - start_date) * random.random()
+print(random_date.date())

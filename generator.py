@@ -2,6 +2,10 @@
 Class that generates data
 """
 
+import pandas as pd
+
+import datetime
+from datetime import timedelta
 import random
 
 from file_manager import FileManager
@@ -11,6 +15,7 @@ class Generator:
 
     def __init__(self):
         self.os_udaje: str = 'result/os_udaje.txt'
+        self.zamestnanec: str = 'result/zamestnanec.txt'
         self.mesto: str = 'result/mesto.txt'
 
         self.file_manager: FileManager = FileManager()
@@ -95,7 +100,7 @@ class Generator:
             email: str = email_list[random.randint(0, len(email_list) - 1)]
             tel_cislo: str = tel_cislo_list[random.randint(0, len(tel_cislo_list) - 1)]
 
-            insert: str = "insert into WKSP_PDSUBYTOVANIA.os_udaje(rod_cislo, meno, priezvisko, ulica, psc, mesto, tel_cislo, email)values(" \
+            insert: str = "insert into WKSP_PDSSEMESTRALKA.os_udaje(rod_cislo, meno, priezvisko, ulica, psc, mesto, tel_cislo, email)values(" \
                           + "'" + rod_cislo + "'" + "," \
                           + "'" + meno + "'" + "," \
                           + "'" + priezvisko + "'" + "," \
@@ -118,20 +123,60 @@ class Generator:
     def generate_rezervacia(self):
         print()
 
-    def generate_zamestnanec(self, min_number: int, max_number):
-        mesto_id: list = list(range(1, 10))
-        insert_list: list = []
-        insert_list.append("declare")
+    def generate_zamestnanec(self, min_number: int, max_number) -> list:
+        mesto_id: list = list(range(1, 11))
 
+        insert_list: list = ["declare"]
+        all_hotel_employees: list = []
         employee_id: int = 1
 
         # z1 WKSP_PDSSEMESTRALKA.zamestnanec:= WKSP_PDSSEMESTRALKA.zamestnanec('104','995119/0000',null,sysdate,null);
         for i in mesto_id:
             hotel_employees: list = []
             number_of_employees: int = random.randint(min_number, max_number)
-            for j in number_of_employees:
+            for j in range(number_of_employees):
+                temp_rod_cislo = list(self.rod_cisla)[random.randint(0, len(self.rod_cisla) - 1)]
+                print(temp_rod_cislo)
+                # aby tam boli aj zamestnanci ktorí neboli ubytovaní
+                if random.random() > 0.8:
+                    self.rod_cisla.discard(temp_rod_cislo)
+
                 hotel_employees.append("A" + str(employee_id))
-                temp_insert: str = "A" + str(employee_id) + "WKSP_PDSSEMESTRALKA.zamestnanec:= WKSP_PDSSEMESTRALKA.zamestnanec("
+
+                start_date = datetime.datetime.now() - timedelta(days=10000)
+                end_date = start_date + timedelta(days=10000)
+                random_date = start_date + (end_date - start_date) * random.random()
+                #TO_DATE('2019-11-03', 'yyyy-mm-dd')
+                temp_insert: str = "A" + str(employee_id) + " " + \
+                                   "WKSP_PDSSEMESTRALKA.zamestnanec:= WKSP_PDSSEMESTRALKA.zamestnanec(" + "'" \
+                                   + str(employee_id) + "'" + "," + \
+                                   "'" + str(temp_rod_cislo) + "'" + "," + \
+                                   "null" + "," + \
+                                   "TO_DATE(" + "'" + str(random_date.date()) + "'" + "," + "'yyyy-mm-dd')" + "," + \
+                                   "null" + ");"
+                insert_list.append(temp_insert)
+                employee_id += 1
+            all_hotel_employees.append(hotel_employees)
+        insert_list.append("begin")
+
+        for i in mesto_id:
+            # update  WKSP_PDSSEMESTRALKA.hotel set h_zamestnanci = WKSP_PDSSEMESTRALKA.t_zamestnanci(z1, z2) where id=1;
+            s: str = str(all_hotel_employees[i-1])
+            s = s.replace('[', '')
+            s = s.replace(']', '')
+            s = s.replace("'", '')
+            temp_insert: str = \
+                "update  WKSP_PDSSEMESTRALKA.hotel set h_zamestnanci = WKSP_PDSSEMESTRALKA.t_zamestnanci(" + \
+                s + ")" + " where id_hotel=" + str(i) + ";"
+            insert_list.append(temp_insert)
+        insert_list.append("end;")
+        insert_list.append("/")
+
+        self.file_manager.save_insert(self.zamestnanec, insert_list)
+
+    def generate_iba(self, min_number: int, max_number):
+        mesto_id: list = list(range(1, 10))
+        room_id: int = 1
 
     def generate_mesto(self):
         data = self.file_manager.load_json()
@@ -149,4 +194,3 @@ class Generator:
             id += 1
 
         self.file_manager.save_insert(self.mesto, temp_list)
-
