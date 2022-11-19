@@ -10,6 +10,9 @@ from file_manager import FileManager
 class Generator:
 
     def __init__(self):
+        self.os_udaje: str = 'result/os_udaje.txt'
+        self.mesto: str = 'result/mesto.txt'
+
         self.file_manager: FileManager = FileManager()
 
         self.meno_muz_file: str = "files/meno_muz.txt"
@@ -107,7 +110,7 @@ class Generator:
             if iteration == how_much:
                 break
 
-        self.file_manager.save_insert(insert_list)
+        self.file_manager.save_insert(self.os_udaje, insert_list)
 
     def generate_zakaznik(self):
         print()
@@ -115,5 +118,35 @@ class Generator:
     def generate_rezervacia(self):
         print()
 
-    def generate_zamestnanec(self):
-        print()
+    def generate_zamestnanec(self, min_number: int, max_number):
+        mesto_id: list = list(range(1, 10))
+        insert_list: list = []
+        insert_list.append("declare")
+
+        employee_id: int = 1
+
+        # z1 WKSP_PDSSEMESTRALKA.zamestnanec:= WKSP_PDSSEMESTRALKA.zamestnanec('104','995119/0000',null,sysdate,null);
+        for i in mesto_id:
+            hotel_employees: list = []
+            number_of_employees: int = random.randint(min_number, max_number)
+            for j in number_of_employees:
+                hotel_employees.append("A" + str(employee_id))
+                temp_insert: str = "A" + str(employee_id) + "WKSP_PDSSEMESTRALKA.zamestnanec:= WKSP_PDSSEMESTRALKA.zamestnanec("
+
+    def generate_mesto(self):
+        data = self.file_manager.load_json()
+
+        id = 1
+        temp_list: list = []
+
+        for i in data:
+            lng = (i['lng'])
+            lat = (i['lat'])
+            nazov = (i['city'])
+            insert: str = ("insert into WKSP_PDSUBYTOVANIA.mesto values(" + str(
+                id) + ",\'" + nazov + "\'," + lng + "," + lat + ");")
+            temp_list.append(insert)
+            id += 1
+
+        self.file_manager.save_insert(self.mesto, temp_list)
+

@@ -1,0 +1,10 @@
+insert into WKSP_PDSSEMESTRALKA.mesto values(1,'Bratislava',17.1128,48.1447);
+insert into WKSP_PDSSEMESTRALKA.mesto values(2,'Košice',21.2500,48.7167);
+insert into WKSP_PDSSEMESTRALKA.mesto values(3,'Petržalka',17.1167,48.1333);
+insert into WKSP_PDSSEMESTRALKA.mesto values(4,'Prešov',21.2333,49.0000);
+insert into WKSP_PDSSEMESTRALKA.mesto values(5,'Žilina',18.7333,49.2167);
+insert into WKSP_PDSSEMESTRALKA.mesto values(6,'Banská Bystrica',19.1453,48.7353);
+insert into WKSP_PDSSEMESTRALKA.mesto values(7,'Nitra',18.0875,48.3147);
+insert into WKSP_PDSSEMESTRALKA.mesto values(8,'Trnava',17.5862,48.3777);
+insert into WKSP_PDSSEMESTRALKA.mesto values(9,'Trenèín',18.0406,48.8942);
+insert into WKSP_PDSSEMESTRALKA.mesto values(10,'Martin',18.9214,49.0636);

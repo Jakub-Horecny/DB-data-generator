@@ -1,6 +1,7 @@
 """
 Class that manages files
 """
+import json
 
 
 class FileManager:
@@ -8,7 +9,7 @@ class FileManager:
     def __init__(self):
         self.coma: str = ","
 
-        self.os_udaje: str = 'result/os_udaje.txt'
+        self.json_file: str = 'files/sk.json'
 
     def load_text_file(self, file_name: str) -> list:
         """
@@ -28,13 +29,20 @@ class FileManager:
                 results.append(line)
         return results
 
-    def save_insert(self, insert_list: list) -> None:
+    def save_insert(self, file_name: str, insert_list: list) -> None:
         """
         saves insert commands to text file
         :param insert_list: list of string to be saved
         :rtype: None
         """
-        with open(self.os_udaje, "w") as file:
+        with open(file_name, "w") as file:
             for i in insert_list:
                 file.write(i)
                 file.write("\n")
+
+    def load_json(self):
+        with open(self.json_file, encoding="utf8") as f:
+            data = json.load(f)
+
+        return data
+

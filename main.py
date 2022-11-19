@@ -12,9 +12,10 @@ def print_hi():
     for i, el in enumerate(lis):
         a = lis[i]
         print(a)"""
-
+    #f: FileManager = FileManager()
+    #f.load_json()
     g: Generator = Generator()
-    g.generate_os_udaje(1_000)
+    #g.generate_mesto()
 
 
 # Press the green button in the gutter to run the script.
@@ -24,7 +25,7 @@ if __name__ == '__main__':
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
 
-import pandas as pd
+"""import pandas as pd
 from datetime import date
 
 datelist = pd.date_range(date.today(), periods=100).tolist()
@@ -37,3 +38,7 @@ print(str(o[0].date()))
 print(a)
 
 print(21%4)
+"""
+
+mesto_id: list = list(range(1, 10))
+print(str(mesto_id))
