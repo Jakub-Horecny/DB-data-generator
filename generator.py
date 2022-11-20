@@ -17,6 +17,9 @@ class Generator:
         self.os_udaje: str = 'result/os_udaje.txt'
         self.zamestnanec: str = 'result/zamestnanec.txt'
         self.mesto: str = 'result/mesto.txt'
+        self.izby: str = 'result/izby.txt'
+        self.rod_cisla_ulozenie: str = 'result/rod_cisla.txt'
+        self.zakaznik: str = 'result/zakaznik.txt'
 
         self.file_manager: FileManager = FileManager()
 
@@ -116,14 +119,31 @@ class Generator:
                 break
 
         self.file_manager.save_insert(self.os_udaje, insert_list)
+        self.file_manager.save_insert(self.rod_cisla_ulozenie, list(self.rod_cisla))
 
-    def generate_zakaznik(self):
+    def generate_zakaznik(self, how_much: int) -> None:
+        rod_cisla_list: list = self.file_manager.load_text_file(self.rod_cisla_ulozenie)
+        customer_id: int = 1
+        insert_list: list = []
+
+        index: int = 0
+        for i in range(how_much):
+            if index < len(rod_cisla_list):
+                temp_rod_cislo: str = rod_cisla_list[index]
+            else:
+                temp_rod_cislo: str = rod_cisla_list[random.randint(0,len(rod_cisla_list) - 1)]
+
+            temp_insert: str = "insert into  WKSP_PDSSEMESTRALKA.zakaznik values(" + str(customer_id) + "," + \
+                "'" + temp_rod_cislo + "'" + ");"
+            insert_list.append(temp_insert)
+            customer_id += 1
+            index += 1
+        self.file_manager.save_insert(self.zakaznik, insert_list)
+
+    def generate_rezervacia(self, how_much: int) -> None:
         print()
 
-    def generate_rezervacia(self):
-        print()
-
-    def generate_zamestnanec(self, min_number: int, max_number) -> list:
+    def generate_zamestnanec(self, min_number: int, max_number) -> None:
         mesto_id: list = list(range(1, 11))
 
         insert_list: list = ["declare"]
@@ -166,17 +186,72 @@ class Generator:
             s = s.replace(']', '')
             s = s.replace("'", '')
             temp_insert: str = \
-                "update  WKSP_PDSSEMESTRALKA.hotel set h_zamestnanci = WKSP_PDSSEMESTRALKA.t_zamestnanci(" + \
+                "update WKSP_PDSSEMESTRALKA.hotel set h_zamestnanci = WKSP_PDSSEMESTRALKA.t_zamestnanci(" + \
                 s + ")" + " where id_hotel=" + str(i) + ";"
             insert_list.append(temp_insert)
         insert_list.append("end;")
         insert_list.append("/")
 
         self.file_manager.save_insert(self.zamestnanec, insert_list)
-
-    def generate_iba(self, min_number: int, max_number):
-        mesto_id: list = list(range(1, 10))
+    """
+    declare
+    -- id_izby, poschodie, id_typu, balkon
+    i1 WKSP_PDSSEMESTRALKA.izba:= WKSP_PDSSEMESTRALKA.izba(3,1,'O',2,'A');
+    begin
+        update  WKSP_PDSSEMESTRALKA.hotel set h_izby = WKSP_PDSSEMESTRALKA.t_izby(i1) where id_hotel=1;
+    end;
+    /
+    """
+    def generate_izba(self, min_number: int, max_number):
+        mesto_id: list = list(range(1, 11))
         room_id: int = 1
+        object_id: int = 1
+        insert_list: list = ["declare"]
+        all_rooms_list: list = []
+
+        for i in mesto_id:
+            hotel_rooms: list = []
+            number_of_rooms: int = random.randint(min_number, max_number)
+            max_poschodie: int = random.randint(1, 11)
+
+            for j in range(number_of_rooms):
+                poschodie: int = random.randint(1, max_poschodie)
+
+                if random.random() > 0.7:
+                    id_typu: str = "A" # apartnam
+                else:
+                    id_typu: str = "O" # obyčajná
+
+                if random.random() > 0.5:
+                    balkon: str = "A"
+                else:
+                    balkon: str = "N"
+
+                hotel_rooms.append("i" + str(object_id))
+                temp_insert: str = "i" + str(object_id) + " " + \
+                    "WKSP_PDSSEMESTRALKA.izba:= WKSP_PDSSEMESTRALKA.izba(" + str(room_id) + "," + \
+                    str(poschodie) + "," + \
+                    "'" + id_typu + "'" + "," + \
+                    "'" + balkon + "'" + ");"
+                insert_list.append(temp_insert)
+                room_id += 1
+                object_id += 1
+            all_rooms_list.append(hotel_rooms)
+            room_id = 1
+        insert_list.append("begin")
+        for i in mesto_id:
+            s: str = str(all_rooms_list[i - 1])
+            s = s.replace('[', '')
+            s = s.replace(']', '')
+            s = s.replace("'", '')
+            temp_insert: str = \
+                "update WKSP_PDSSEMESTRALKA.hotel set h_izby = WKSP_PDSSEMESTRALKA.t_izby(" + \
+                s + ")" + " where id_hotel=" + str(i) + ";"
+            insert_list.append(temp_insert)
+        insert_list.append("end;")
+        insert_list.append("/")
+
+        self.file_manager.save_insert(self.izby, insert_list)
 
     def generate_mesto(self):
         data = self.file_manager.load_json()

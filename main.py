@@ -18,7 +18,9 @@ def print_hi():
     # f.load_json()
     g: Generator = Generator()
     g.generate_os_udaje(5_00)
-    g.generate_zamestnanec(5, 10)
+    #g.generate_zamestnanec(5, 10)
+    #g.generate_izba(5, 10)
+    g.generate_zakaznik(1200)
 
 
 # Press the green button in the gutter to run the script.
