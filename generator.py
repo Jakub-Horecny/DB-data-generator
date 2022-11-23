@@ -14,12 +14,15 @@ from file_manager import FileManager
 class Generator:
 
     def __init__(self):
+        self.rod_cisla_ulozenie: str = 'temp_files/rod_cisla.txt'
+        self.id_izba_ulozenie: str = 'temp_files/id_izba.txt'
+
         self.os_udaje: str = 'result/os_udaje.txt'
         self.zamestnanec: str = 'result/zamestnanec.txt'
         self.mesto: str = 'result/mesto.txt'
         self.izby: str = 'result/izby.txt'
-        self.rod_cisla_ulozenie: str = 'result/rod_cisla.txt'
         self.zakaznik: str = 'result/zakaznik.txt'
+        self.rezeracia: str = 'result/rezeracia.txt'
 
         self.file_manager: FileManager = FileManager()
 
@@ -131,7 +134,7 @@ class Generator:
             if index < len(rod_cisla_list):
                 temp_rod_cislo: str = rod_cisla_list[index]
             else:
-                temp_rod_cislo: str = rod_cisla_list[random.randint(0,len(rod_cisla_list) - 1)]
+                temp_rod_cislo: str = rod_cisla_list[random.randint(0, len(rod_cisla_list) - 1)]
 
             temp_insert: str = "insert into  WKSP_PDSSEMESTRALKA.zakaznik values(" + str(customer_id) + "," + \
                 "'" + temp_rod_cislo + "'" + ");"
@@ -141,10 +144,46 @@ class Generator:
         self.file_manager.save_insert(self.zakaznik, insert_list)
 
     def generate_rezervacia(self, how_much: int) -> None:
-        print()
+        id_rezervacia: int = 1
+        insert_list: list = []
+
+        for i in range(how_much):
+            temp_pocet_ludi: int = random.randint(1, 4)
+            temp_id_zakaznik: int = random.randint(1, 501)
+            temp_id_hotel: int = random.randint(1, 10)
+
+            start_date = datetime.datetime.now() - timedelta(days=2800)
+            end_date = start_date + timedelta(days=2800)
+            random_od = start_date + (end_date - start_date) * random.random()
+
+            start_date = datetime.datetime.now() - timedelta(days=10)
+            end_date = start_date + timedelta(days=5)
+            random_do = random_od + (end_date - start_date) * random.random()
+
+            start_date = datetime.datetime.now() - timedelta(days=10)
+            end_date = start_date + timedelta(days=5)
+            random_pladba = start_date + (end_date - start_date) * random.random()
+
+            # exec WKSP_PDSSEMESTRALKA.vytvorenie_rezervacie(1,8,2);
+            # id_hot integer, id_rez Integer, pocet_ludi integer,
+            # dat_od date, dat_do date, datum_platby date, id_zakaznik Integer
+            temp_insert: str = "exec WKSP_PDSSEMESTRALKA.vytvorenie_rezervacie(" + \
+                                str(temp_id_hotel) + "," + \
+                                str(id_rezervacia) + "," + \
+                                str(temp_pocet_ludi) + "," + \
+                               "TO_DATE(" + "'" + str(random_od.date()) + "'" + "," + "'yyyy-mm-dd')" + "," + \
+                               "TO_DATE(" + "'" + str(random_do.date()) + "'" + "," + "'yyyy-mm-dd')" + "," + \
+                               "TO_DATE(" + "'" + str(random_pladba.date()) + "'" + "," + "'yyyy-mm-dd')" + ","+ \
+                                str(temp_id_zakaznik) + ");"
+            insert_list.append(temp_insert)
+            id_rezervacia += 1
+
+        self.file_manager.save_insert(self.rezeracia, insert_list)
 
     def generate_zamestnanec(self, min_number: int, max_number) -> None:
         mesto_id: list = list(range(1, 11))
+
+        rod_cisla_list: list = self.file_manager.load_text_file(self.rod_cisla_ulozenie)
 
         insert_list: list = ["declare"]
         all_hotel_employees: list = []
@@ -155,16 +194,17 @@ class Generator:
             hotel_employees: list = []
             number_of_employees: int = random.randint(min_number, max_number)
             for j in range(number_of_employees):
-                temp_rod_cislo = list(self.rod_cisla)[random.randint(0, len(self.rod_cisla) - 1)]
-                print(temp_rod_cislo)
+                temp_rod_cislo = rod_cisla_list[random.randint(0, len(rod_cisla_list) - 1)]
+
+                # print(temp_rod_cislo)
                 # aby tam boli aj zamestnanci ktorí neboli ubytovaní
                 if random.random() > 0.8:
                     self.rod_cisla.discard(temp_rod_cislo)
 
                 hotel_employees.append("A" + str(employee_id))
 
-                start_date = datetime.datetime.now() - timedelta(days=10000)
-                end_date = start_date + timedelta(days=10000)
+                start_date = datetime.datetime.now() - timedelta(days=2800)
+                end_date = start_date + timedelta(days=2800)
                 random_date = start_date + (end_date - start_date) * random.random()
                 #TO_DATE('2019-11-03', 'yyyy-mm-dd')
                 temp_insert: str = "A" + str(employee_id) + " " + \
@@ -193,6 +233,7 @@ class Generator:
         insert_list.append("/")
 
         self.file_manager.save_insert(self.zamestnanec, insert_list)
+        self.file_manager.save_insert(self.rod_cisla_ulozenie, rod_cisla_list)
     """
     declare
     -- id_izby, poschodie, id_typu, balkon
@@ -209,6 +250,7 @@ class Generator:
         insert_list: list = ["declare"]
         all_rooms_list: list = []
 
+
         for i in mesto_id:
             hotel_rooms: list = []
             number_of_rooms: int = random.randint(min_number, max_number)
@@ -218,9 +260,9 @@ class Generator:
                 poschodie: int = random.randint(1, max_poschodie)
 
                 if random.random() > 0.7:
-                    id_typu: str = "A" # apartnam
+                    id_typu: str = "A" + str(random.randint(1,4)) # apartnam
                 else:
-                    id_typu: str = "O" # obyčajná
+                    id_typu: str = "O" + str(random.randint(1,4)) # obyčajná
 
                 if random.random() > 0.5:
                     balkon: str = "A"

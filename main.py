@@ -17,10 +17,11 @@ def print_hi():
     # f: FileManager = FileManager()
     # f.load_json()
     g: Generator = Generator()
-    g.generate_os_udaje(5_00)
+    #g.generate_os_udaje(500)
     #g.generate_zamestnanec(5, 10)
-    #g.generate_izba(5, 10)
-    g.generate_zakaznik(1200)
+    #g.generate_izba(50, 100)
+    #g.generate_zakaznik(500)
+    g.generate_rezervacia(500)
 
 
 # Press the green button in the gutter to run the script.

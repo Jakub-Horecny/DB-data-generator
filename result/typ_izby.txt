@@ -1,2 +1,8 @@
-insert into WKSP_PDSSEMESTRALKA.typ_izby values('A','apartman',2);
-insert into WKSP_PDSSEMESTRALKA.typ_izby values('O','obyčajná izba', 3);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('A1','apartman',1);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('A2','apartman',2);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('A3','apartman',3);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('A4','apartman',4);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('O1','obyčajná izba', 1);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('O2','obyčajná izba', 2);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('O3','obyčajná izba', 3);
+insert into WKSP_PDSSEMESTRALKA.typ_izby values('O4','obyčajná izba', 4);
